@@ -1,0 +1,21 @@
+{
+  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "files.exclude": {
+    "**/*.pyc": true
+  },
+  "editor.formatOnSave": true,
+  "search.exclude": {
+    "**/env": true,
+    "**/.git": true,
+    // "**/facto*": true,
+    "**/migra*/**": true,
+    // "**/test*/**": true
+  },
+  "python.formatting.provider": "black",
+  "files.associations": {
+    "**/requirements{/**,*}.{txt,in}": "pip-requirements"
+  },
+  "restructuredtext.confPath": "${workspaceFolder}/env/lib/python3.6/site-packages/compressor",
+}
