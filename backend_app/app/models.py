@@ -1,7 +1,10 @@
 from peewee import (
     MySQLDatabase,
-    CharField,
     Model,
+    CharField,
+    TextField,
+    IntegerField,
+    ForeignKeyField,
 )
 from app.settings import DB_SETTINGS
 
@@ -16,8 +19,26 @@ class BaseModel(Model):
         database = db
 
 
+class Nationality(BaseModel):
+    name = CharField(null=True)
+
+
+class Club(BaseModel):
+    name = CharField(null=True)
+
+
 class Player(BaseModel):
-    name = CharField()
+    name = CharField(null=True)
+    age = IntegerField(null=True)
+    nationality = ForeignKeyField(
+        column_name="nationality_id", field="id", model=Nationality
+    )
+    club = ForeignKeyField(
+        column_name="club_id", field="id", model=Club
+    )
+    photo = TextField(null=True)
+    overall = IntegerField(null=True)
+    value = IntegerField(null=True)
 
 
 def create_tables():
