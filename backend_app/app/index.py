@@ -1,20 +1,14 @@
 import json
-from web_server.wsgi_handler import WSGIServer
+from web_server.wsgi_handler import WSGIHandler, JsonResponse
 
-app = WSGIServer()
+app = WSGIHandler()
 
 
 @app.route("/")
-def index(env, start_response):
-    start_response("200 OK", [("Content-Type", "application/json")])
-
-    response_body = json.dumps({"index": "index"})
-    return [bytes(response_body)]
+def index(request):
+    return JsonResponse(request, {"index": "index"})
 
 
 @app.route("/players/")
-def get_players(env, start_response):
-    start_response("200 OK", [("Content-Type", "application/json")])
-
-    response_body = json.dumps({"players": "players"})
-    return [bytes(response_body)]
+def get_players(request):
+    return JsonResponse(request, {"players": "players"})
