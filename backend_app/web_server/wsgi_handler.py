@@ -55,11 +55,13 @@ class WSGIHandler(object):
     def before_request(self):
         def wrapper(function):
             self.middleware_handler.assign_pre(function)
+
         return wrapper
 
     def after_request(self):
         def wrapper(function):
             self.middleware_handler.assign_post(function)
+
         return wrapper
 
 
@@ -104,16 +106,27 @@ class MiddlewareHandler(object):
             response = middleware(response)
         return response
 
+
 # ----- Request
 
 
 class Request(object):
+    query_params = {}
+
     def __init__(self, env, start_response):
         self.env = env
         self.start_response = start_response
+        self.query_params = self.get_query_params_from_url()
+
+    def get_query_params_from_url(self):
+        query = self.env["QUERY_STRING"]
+        params = parse_qs(query)
+        query_params = {k: v[0] for k, v in params.items()}
+        return query_params
 
 
 # ----- Response
+
 
 class HttpResponseBase(object):
     status_code = 200
@@ -160,6 +173,7 @@ class HttpResponseNotFound(JsonResponse):
 class HttpResponseServerError(JsonResponse):
     status_code = 500
 
+
 # ----- Logger
 
 
@@ -168,12 +182,12 @@ class Logger(object):
         settings = importlib.import_module(os.environ.get("SETTINGS_MODULE"))
         config_file = settings.LOGGER_CONFIG_FILE
 
-        with open(config_file, 'r') as f:
+        with open(config_file, "r") as f:
             log_cfg = yaml.safe_load(f.read())
 
         logging.config.dictConfig(log_cfg)
 
-        self.logger = logging.getLogger('dev')
+        self.logger = logging.getLogger("dev")
 
     def error(self, msg):
         self.logger.setLevel(logging.ERROR)
@@ -183,6 +197,7 @@ class Logger(object):
         self.logger.setLevel(logging.INFO)
         self.logger.info(msg)
 
+
 # ----- Exciptoins
 
 
@@ -191,6 +206,7 @@ class Http404(Exception):
 
     def __str__(self):
         return "http not found"
+
 
 # ----- Exciptoins Handler
 
