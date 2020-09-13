@@ -9,6 +9,7 @@ import importlib
 class WSGIHandler(object):
     def __init__(self):
         self.router = Router()
+        self.middleware_handler = MiddlewareHandler()
 
     def __call__(self, env, start_response):
         return self._handle_request(env, start_response)
@@ -16,9 +17,15 @@ class WSGIHandler(object):
     def _handle_request(self, env, start_response):
         try:
             request = Request(env, start_response)
-            path_info = env.get("PATH_INFO")
-            controller = self.router.get_controller(path_info)
-            return controller(request).write()
+
+            controller = self.router.get_controller(request)
+
+            # run pre middlewares before and after request
+            self.middleware_handler.run_pre_request(request)
+            response = controller(request).write()
+            response = self.middleware_handler.run_post_request(response)
+
+            return response
         except Exception as e:
             return ExciptoinsHandler().handle(request, e)
 
@@ -31,17 +38,18 @@ class WSGIHandler(object):
 
         return wrapper
 
-    def before_request(self, *args, **kwargs):
+    def before_request(self):
         def wrapper(function):
-            pass
-
+            self.middleware_handler.assign_pre(function)
         return wrapper
 
-    def after_request(self, *args, **kwargs):
+    def after_request(self):
         def wrapper(function):
-            pass
-
+            self.middleware_handler.assign_post(function)
         return wrapper
+
+
+# ----- Router
 
 
 class Router(object):
@@ -51,11 +59,15 @@ class Router(object):
     def assign(self, path, function):
         self.routes[path] = function
 
-    def get_controller(self, path):
+    def get_controller(self, request):
+        path = request.env.get("PATH_INFO")
         controller = self.routes.get(path)
         if not controller:
             raise Http404()
         return controller
+
+
+# ----- MiddlewareHandler
 
 
 class MiddlewareHandler(object):
@@ -63,20 +75,20 @@ class MiddlewareHandler(object):
         self.pre_request_middlewares = []
         self.post_request_middlewares = []
 
-    def assign_pre(self, path, function):
+    def assign_pre(self, function):
         self.pre_request_middlewares.append(function)
 
-    def assign_post(self, path, function):
+    def assign_post(self, function):
         self.post_request_middlewares.append(function)
 
-    def run_pre_request(self, env, start_response):
+    def run_pre_request(self, request):
         for middleware in self.pre_request_middlewares:
-            middleware(env, start_response)
+            middleware(request)
 
-    def run_post_request(self, env, start_response):
+    def run_post_request(self, response):
         for middleware in self.post_request_middlewares:
-            middleware(env, start_response)
-
+            response = middleware(response)
+        return response
 
 # ----- Request
 
