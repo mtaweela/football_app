@@ -1,3 +1,0 @@
-
-class WSGIHandler(object):
-    pass
