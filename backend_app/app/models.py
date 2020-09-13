@@ -39,6 +39,8 @@ class Player(BaseModel):
     value = IntegerField(null=True)
 
 
-def create_tables():
+def create_schema():
     with db:
-        db.create_tables([Player])
+        db.create_tables([Nationality, Club, Player])
+
+
