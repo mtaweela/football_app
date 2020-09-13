@@ -4,6 +4,20 @@ import logging.config
 import yaml
 import os
 import importlib
+from web_server.data_structures import Singleton
+
+
+# ----- AppGlabals
+
+
+class AppGlabals(Singleton):
+    pass
+
+
+g = AppGlabals()
+
+
+# ----- WSGIHandler
 
 
 class WSGIHandler(object):
