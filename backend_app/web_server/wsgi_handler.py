@@ -9,13 +9,13 @@ class WSGIHandler(object):
         return self._handle_request(env, start_response)
 
     def _handle_request(self, env, start_response):
-        request = Request(env, start_response)
-        path_info = env.get("PATH_INFO")
         try:
+            request = Request(env, start_response)
+            path_info = env.get("PATH_INFO")
             controller = self.router.get_controller(path_info)
-        except Http404 as e:
-            return HttpResponseNotFound(request, {"error": e.message}).write()
-        return controller(request).write()
+            return controller(request).write()
+        except Exception as e:
+            return ExciptoinsHandler().handle(request, e)
 
     def route(self, path=None):
         if not path:
@@ -84,13 +84,12 @@ class Request(object):
 
 # ----- Response
 
-
 class HttpResponseBase(object):
     status_code = 200
     content_type = "text/html"
     _content = ""
 
-    def __init__(self, request, content, status=None):
+    def __init__(self, request, content="", status=None):
         self.request = request
         self._content = content
         if status:
@@ -110,7 +109,7 @@ class HttpResponse(HttpResponseBase):
 class JsonResponse(HttpResponseBase):
     content_type = "application/json"
 
-    def __init__(self, request, dict_content, status=None):
+    def __init__(self, request, dict_content={}, status=None):
         content = json.dumps(dict_content)
         super(JsonResponse, self).__init__(request, content, status)
 
@@ -136,3 +135,17 @@ class HttpResponseServerError(JsonResponse):
 
 class Http404(Exception):
     message = "not found"
+
+    def __str__(self):
+        return "http not found"
+
+# ----- Exciptoins Handler
+
+
+class ExciptoinsHandler(object):
+    def handle(self, request, exception):
+        if type(exception) == Http404:
+            return HttpResponseNotFound(request, {"error": exception.message}).write()
+        else:
+            Logger().error(exception)
+            return HttpResponseServerError(request).write()

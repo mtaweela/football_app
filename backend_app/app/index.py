@@ -1,4 +1,3 @@
-import json
 from web_server.wsgi_handler import WSGIHandler, JsonResponse
 
 app = WSGIHandler()
