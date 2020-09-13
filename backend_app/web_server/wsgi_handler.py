@@ -1,4 +1,9 @@
 import json
+import logging
+import logging.config
+import yaml
+import os
+import importlib
 
 
 class WSGIHandler(object):
@@ -129,6 +134,28 @@ class HttpResponseNotFound(JsonResponse):
 class HttpResponseServerError(JsonResponse):
     status_code = 500
 
+# ----- Logger
+
+
+class Logger(object):
+    def __init__(self):
+        settings = importlib.import_module(os.environ.get("SETTINGS_MODULE"))
+        config_file = settings.LOGGER_CONFIG_FILE
+
+        with open(config_file, 'r') as f:
+            log_cfg = yaml.safe_load(f.read())
+
+        logging.config.dictConfig(log_cfg)
+
+        self.logger = logging.getLogger('dev')
+
+    def error(self, msg):
+        self.logger.setLevel(logging.ERROR)
+        self.logger.error(msg)
+
+    def info(self, msg):
+        self.logger.setLevel(logging.INFO)
+        self.logger.info(msg)
 
 # ----- Exciptoins
 
