@@ -20,11 +20,11 @@ class BaseModel(Model):
 
 
 class Nationality(BaseModel):
-    name = CharField(null=True)
+    name = CharField(null=False, unique=True)
 
 
 class Club(BaseModel):
-    name = CharField(null=True)
+    name = CharField(null=False, unique=True)
 
 
 class Player(BaseModel):
@@ -33,9 +33,7 @@ class Player(BaseModel):
     nationality = ForeignKeyField(
         column_name="nationality_id", field="id", model=Nationality
     )
-    club = ForeignKeyField(
-        column_name="club_id", field="id", model=Club
-    )
+    club = ForeignKeyField(column_name="club_id", field="id", model=Club)
     photo = TextField(null=True)
     overall = IntegerField(null=True)
     value = IntegerField(null=True)
