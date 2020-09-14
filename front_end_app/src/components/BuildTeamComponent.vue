@@ -25,7 +25,7 @@
     <div v-if="!loading" class="mt-3">
       <hr />
       <h4>Total to pay:</h4>
-      <p>{{ response_data.total }}</p>
+      <p>{{ response_data.total.toLocaleString() }}</p>
       <h4>Team:</h4>
       <div class="card-columns">
         <div class="card" v-for="player in players" v-bind:key="player.id">
