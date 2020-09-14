@@ -51,6 +51,15 @@ def create_schema():
 def add_data_from_csv():
     import csv
 
+    def get_vallue(value):
+        multiply_number = 0
+        if "M" in value:
+            multiply_number = 10 ** 6
+        if "K" in value:
+            multiply_number = 10 ** 3
+        value = value.replace("€", "").replace("M", "").replace("K", "") 
+        return float(value) * multiply_number
+
     with open("data.csv", newline="") as csvfile:
         csvreader = csv.reader(csvfile, delimiter=",", quotechar="|")
         fields = next(csvreader)
@@ -63,10 +72,9 @@ def add_data_from_csv():
                 "club": Club.get_or_create(name=row[9])[0].id,
                 "photo": row[4],
                 "overall": row[7],
-                "value": row[11].replace("€", "").replace("M", "").replace("K", ""),
+                "value": get_vallue(row[11]),
                 "position": row[21],
             }
             for row in csvreader
         ]
-        # print(data_source)
         Player.insert_many(data_source).execute()
