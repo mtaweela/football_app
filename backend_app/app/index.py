@@ -1,6 +1,7 @@
 from web_server.wsgi_handler import (
     WSGIHandler,
     JsonResponse,
+    HttpResponseBadRequest,
     g,
 )
 from playhouse.shortcuts import model_to_dict
@@ -11,6 +12,7 @@ from app.models import (
     Club,
     Nationality,
 )
+from app.utils import TeamBuilder, CanNotBuildException
 
 app = WSGIHandler()
 
@@ -42,7 +44,6 @@ def search_players(query, search_string):
 
 @app.route("/players/")
 def get_players(request):
-    search_string = request.query_params.get("search")
     query = (
         Player.select(Player, Nationality, Club)
         .join(Club, on=(Player.club == Club.id))
@@ -57,4 +58,27 @@ def get_players(request):
     res_body = [model_to_dict(item, recurse=True) for item in query]
     return JsonResponse(request, res_body)
 
+
+@app.route("/best_team/")
+def get_best_team(request):
+    total = request.query_params.get("total")
+    total = int(total)
+    try:
+        team_arr = TeamBuilder(total=total).get_team()
+    except CanNotBuildException as e:
+        return HttpResponseBadRequest(request, {"detail": e.message})
+
+    team_ids = [player.get("id") for player in team_arr]
+    query = (
+        Player.select(Player)
+        .where(Player.id.in_(team_ids))
+        # .join(Club, on=(Player.club == Club.id))
+        # .switch(Player)
+        # .join(Nationality, on=(Player.nationality == Nationality.id))
+    )
+    players = [model_to_dict(item) for item in query]
+    res_body = {
+        "players": players,
+        "total": sum([player.get("value") or 0 for player in players])
+    }
     return JsonResponse(request, res_body)
