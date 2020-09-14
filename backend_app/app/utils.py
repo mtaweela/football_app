@@ -36,9 +36,16 @@ class TeamBuilder(object):
 
     def __init__(self, total):
         self.total = total
+        self._initialize_data(2)
+        super().__init__()
+
+    def _initialize_data(self, division):
         self.query = (
             Player.select()
-            .where(Player.value <= total / 2, Player.position.in_(self.all_positions))
+            .where(
+                Player.value <= self.total / division,
+                Player.position.in_(self.all_positions),
+            )
             .order_by(Player.overall.desc())
             .limit(200)
         )
@@ -52,8 +59,6 @@ class TeamBuilder(object):
         self.halfback_ps = self._get_halfback_ps()
 
         self.forward_playing_ps = self._get_forward_playing_ps()
-
-        super().__init__()
 
     def _get_goalkeepers(self):
         query = self.query.where(
@@ -80,6 +85,14 @@ class TeamBuilder(object):
         return [model_to_dict(i) for i in query]
 
     def get_team(self):
+        self._set_team_arr()
+
+        if not len(self.players_arr) == 11:
+            raise CanNotBuildException()
+
+        return self.players_arr
+
+    def _set_team_arr(self):
         current_index = 0
         self._reset()
         while not self._is_okay():
@@ -93,16 +106,6 @@ class TeamBuilder(object):
 
         if not self._is_okay():
             self._reset()
-
-        print([i.get("id") for i in self.players_arr])
-        print(len(self.players_arr))
-        players_arr_total_cost = sum([p.get("value") for p in self.players_arr])
-        print("total", f"{players_arr_total_cost:,}")
-
-        if not len(self.players_arr) == 11:
-            raise CanNotBuildException()
-
-        return self.players_arr
 
     def _reset(self):
         self.players_arr = []
