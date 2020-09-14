@@ -9,6 +9,7 @@ verify_ssl = true
 peewee = "==3.13.3"
 PyMySQL = "==0.10.1"
 uWSGI = "==2.0.19.1"
+pyyaml = "*"
 
 [requires]
 python_version = "3.7"
