@@ -48,3 +48,25 @@ def create_schema():
         db.create_tables([Nationality, Club, Player])
 
 
+def add_data_from_csv():
+    import csv
+
+    with open("data.csv", newline="") as csvfile:
+        csvreader = csv.reader(csvfile, delimiter=",", quotechar="|")
+        fields = next(csvreader)
+
+        data_source = [
+            {
+                "name": row[2],
+                "age": row[3],
+                "nationality": Nationality.get_or_create(name=row[5])[0].id,
+                "club": Club.get_or_create(name=row[9])[0].id,
+                "photo": row[4],
+                "overall": row[7],
+                "value": row[11].replace("€", "").replace("M", "").replace("K", ""),
+                "position": row[21],
+            }
+            for row in csvreader
+        ]
+        # print(data_source)
+        Player.insert_many(data_source).execute()
