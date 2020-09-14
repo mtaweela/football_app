@@ -90,7 +90,7 @@ export default {
       this.loading = true;
       params["total"] = this.priceValue;
       axios
-        .get("http://footballapp.dev01.dev/be/best_team/", { params })
+        .get("http://104.248.246.216/be/best_team/", { params })
         .then((response) => {
           this.players = response.data.data.players;
           this.response_data = response.data.data;
