@@ -1,0 +1,11 @@
+version: "2"
+services:
+  base:
+    image: node:10-alpine
+    volumes:
+      - ./front_end_app:/app
+    working_dir: /app
+  install:
+    extends:
+      service: base
+    command: npm i
