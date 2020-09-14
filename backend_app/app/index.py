@@ -52,6 +52,7 @@ def get_players(request):
     if search_string:
         query = search_players(query, search_string)
 
+    query = query.order_by(Player.id.asc())
     query_count = query.count()
     page_query = request.query_params.get("page")
 
