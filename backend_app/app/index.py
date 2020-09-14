@@ -85,8 +85,10 @@ def get_best_team(request):
 
     players = [model_to_dict(item) for item in query]
     res_body = {
-        "players": players,
-        "total": sum([player.get("value") or 0 for player in players]),
+        "data": {
+            "players": players,
+            "total": sum([player.get("value") or 0 for player in players]),
+        }
     }
 
     return JsonResponse(request, res_body)
