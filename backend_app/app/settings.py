@@ -1,17 +1,15 @@
-from decouple import config
-import os
+from os import environ, getenv, path
 
 
 DEBUG = False
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
 
-LOGGER_CONFIG_FILE = os.path.join(BASE_DIR, "logging.yml")
-
+LOGGER_CONFIG_FILE = path.join(BASE_DIR, "logging.yml")
 
 DB_SETTINGS = {
-    "database": "football_app",
-    "user": "user",
-    "password": "db_pass",
-    "host": "localhost",
-    "port": 3306,
+    "database": environ.get("MYSQL_DATABASE", "football_app"),
+    "user": environ.get("MYSQL_USER", "root"),
+    "password": environ.get("MYSQL_PASSWORD", ""),
+    "host": environ.get("DB_HOST", "localhost"),
+    "port": int(environ.get("DB_PORT", "3306")),
 }
