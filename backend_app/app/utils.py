@@ -36,7 +36,7 @@ class TeamBuilder(object):
 
     def __init__(self, total):
         self.total = total
-        self._initialize_data(2)
+        self._initialize_data(6)
         super().__init__()
 
     def _initialize_data(self, division):
@@ -47,7 +47,7 @@ class TeamBuilder(object):
                 Player.position.in_(self.all_positions),
             )
             .order_by(Player.overall.desc())
-            .limit(200)
+            .limit(400)
         )
         self.query_arr = [model_to_dict(i) for i in self.query]
         self.players_count = self.query.count()
