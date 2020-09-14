@@ -37,7 +37,7 @@ def search_players(query, search_string):
     ).distinct()
 
 
-@app.route("/players/")
+@app.route("/be/players/")
 def get_players(request):
     page_size = 10
     page = 1
@@ -59,13 +59,13 @@ def get_players(request):
         "data": {
             "players": [model_to_dict(item, recurse=True) for item in query],
             "count": query_count,
-            "pages_count": round(query_count / page_size)
+            "pages_count": round(query_count / page_size),
         }
     }
     return JsonResponse(request, res_body)
 
 
-@app.route("/best_team/")
+@app.route("/be/best_team/")
 def get_best_team(request):
     total = request.query_params.get("total")
     total = int(total)
