@@ -5,29 +5,16 @@
       <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="#">Search</a>
+            <router-link to="/" class="nav-link">Search</router-link>
           </li>
           <li class="nav-item active">
-            <a class="nav-link" href="#">Compose a Team</a>
+            <router-link to="/about" class="nav-link">Build A Team</router-link>
           </li>
         </ul>
       </div>
     </nav>
-    <div class="container">
-      <PlayersSearch msg="Welcome to Your Vue.js App" />
-    </div>
+    <router-view />
   </div>
 </template>
-
-<script>
-import PlayersSearch from "./components/PlayersSearch.vue";
-
-export default {
-  name: "App",
-  components: {
-    PlayersSearch,
-  },
-};
-</script>
 
 <style></style>
