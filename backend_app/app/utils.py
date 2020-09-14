@@ -38,10 +38,7 @@ class TeamBuilder(object):
         self.total = total
         self.query = (
             Player.select()
-            .where(
-                Player.value <= total / 2,
-                Player.position.in_(self.all_positions)
-            )
+            .where(Player.value <= total / 2, Player.position.in_(self.all_positions))
             .order_by(Player.overall.desc())
             .limit(200)
         )
@@ -85,12 +82,17 @@ class TeamBuilder(object):
     def get_team(self):
         current_index = 0
         self._reset()
-        while self._is_okay() and current_index < self.players_count:
+        while not self._is_okay():
+            if current_index >= self.players_count:
+                break
             self._reset()
             current_index += 1
             item = self.query_arr[0]
             self._remove_item(item)
             self._fill_arr(first_item=item)
+
+        if not self._is_okay():
+            self._reset()
 
         print([i.get("id") for i in self.players_arr])
         print(len(self.players_arr))
@@ -111,7 +113,7 @@ class TeamBuilder(object):
 
     def _is_okay(self):
         players_arr_total_cost = sum([p.get("value") for p in self.players_arr])
-        return players_arr_total_cost > self.total or len(self.players_arr) < 11
+        return (players_arr_total_cost < self.total) and (len(self.players_arr) == 11)
 
     def _remove_item(self, item):
         self.query_arr.remove(item)
