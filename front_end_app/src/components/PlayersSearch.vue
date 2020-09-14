@@ -13,13 +13,7 @@
           />
         </div>
         <div class="col-auto">
-          <button
-            v-on:click="search()"
-            type="submit"
-            class="btn btn-primary mb-2"
-          >
-            Search
-          </button>
+          <button v-on:click="search()" type="submit" class="btn btn-primary mb-2">Search</button>
         </div>
       </div>
     </form>
@@ -51,23 +45,28 @@
     <div v-if="!loading" class="mt-4">
       <div class="card-columns">
         <div class="card" v-for="player in players" v-bind:key="player.id">
-          <img
-            class="card-img-top"
-            v-bind:src="player.photo"
-            v-bind:alt="player.name"
-          />
+          <img class="card-img-top" v-bind:src="player.photo" v-bind:alt="player.name" />
           <div class="card-body">
             <h5 class="card-title">{{ player.name }}</h5>
-            <p class="card-text"><b>Age: </b>{{ player.age }}</p>
             <p class="card-text">
-              <b>Nationality: </b>{{ player.nationality.name }}
-            </p>
-            <p class="card-text"><b>Club: </b>{{ player.club.name }}</p>
-            <p class="card-text">
-              <b>Overall (score): </b>{{ player.overall }}
+              <b>Age:</b>
+              {{ player.age }}
             </p>
             <p class="card-text">
-              <b>Value: </b>€ {{ player.value.toLocaleString() }}
+              <b>Nationality:</b>
+              {{ player.nationality.name }}
+            </p>
+            <p class="card-text">
+              <b>Club:</b>
+              {{ player.club.name }}
+            </p>
+            <p class="card-text">
+              <b>Overall (score):</b>
+              {{ player.overall }}
+            </p>
+            <p class="card-text">
+              <b>Value:</b>
+              € {{ player.value.toLocaleString() }}
             </p>
           </div>
         </div>
@@ -100,7 +99,7 @@ export default {
   props: {
     msg: String,
   },
-  data: function() {
+  data: function () {
     return {
       players: [],
       response_data: {},
@@ -122,7 +121,7 @@ export default {
       this.loading = true;
 
       axios
-        .get("http://104.248.246.216/be/players/", { params })
+        .get("https://football.dev01.dev/be/players/", { params })
         .then((response) => {
           this.players = response.data.data.players;
           this.response_data = response.data.data;

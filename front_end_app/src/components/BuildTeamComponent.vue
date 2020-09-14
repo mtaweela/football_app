@@ -14,44 +14,43 @@
           />
         </div>
         <div class="col-auto">
-          <button
-            v-on:click="search()"
-            type="submit"
-            class="btn btn-primary mb-2"
-          >
-            Build Team
-          </button>
+          <button v-on:click="search()" type="submit" class="btn btn-primary mb-2">Build Team</button>
         </div>
       </div>
     </form>
 
-    <div v-if="loading" class=" mt-3">
+    <div v-if="loading" class="mt-3">
       <h4>Loading .....</h4>
     </div>
-    <div v-if="!loading" class=" mt-3">
+    <div v-if="!loading" class="mt-3">
       <hr />
       <h4>Total to pay:</h4>
       <p>{{ response_data.total }}</p>
       <h4>Team:</h4>
       <div class="card-columns">
         <div class="card" v-for="player in players" v-bind:key="player.id">
-          <img
-            class="card-img-top"
-            v-bind:src="player.photo"
-            v-bind:alt="player.name"
-          />
+          <img class="card-img-top" v-bind:src="player.photo" v-bind:alt="player.name" />
           <div class="card-body">
             <h5 class="card-title">{{ player.name }}</h5>
-            <p class="card-text"><b>Age: </b>{{ player.age }}</p>
             <p class="card-text">
-              <b>Nationality: </b>{{ player.nationality.name }}
-            </p>
-            <p class="card-text"><b>Club: </b>{{ player.club.name }}</p>
-            <p class="card-text">
-              <b>Overall (score): </b>{{ player.overall }}
+              <b>Age:</b>
+              {{ player.age }}
             </p>
             <p class="card-text">
-              <b>Value: </b>€ {{ player.value.toLocaleString() }}
+              <b>Nationality:</b>
+              {{ player.nationality.name }}
+            </p>
+            <p class="card-text">
+              <b>Club:</b>
+              {{ player.club.name }}
+            </p>
+            <p class="card-text">
+              <b>Overall (score):</b>
+              {{ player.overall }}
+            </p>
+            <p class="card-text">
+              <b>Value:</b>
+              € {{ player.value.toLocaleString() }}
             </p>
           </div>
         </div>
@@ -68,7 +67,7 @@ export default {
   props: {
     msg: String,
   },
-  data: function() {
+  data: function () {
     return {
       players: [],
       response_data: {},
@@ -90,7 +89,7 @@ export default {
       this.loading = true;
       params["total"] = this.priceValue;
       axios
-        .get("http://104.248.246.216/be/best_team/", { params })
+        .get("https://football.dev01.dev/be/best_team/", { params })
         .then((response) => {
           this.players = response.data.data.players;
           this.response_data = response.data.data;
