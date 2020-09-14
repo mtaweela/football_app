@@ -71,3 +71,15 @@ make install_front
 make build_front
 make prod
 ```
+
+## Built With
+
+- [Python](https://www.python.org/)
+- [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/)
+- [MySQL](https://www.mysql.com/)
+- [peewee](http://docs.peewee-orm.com/en/latest/) ORM for MySQL
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/compose-file/)
+- [NGINX](https://www.nginx.com/)
+- [Vue.js](https://vuejs.org/)
+- [Bootstrap](https://getbootstrap.com/)
