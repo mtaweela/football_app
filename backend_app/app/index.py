@@ -64,6 +64,7 @@ def get_players(request):
             "players": [model_to_dict(item, recurse=True) for item in query_page],
             "count": query_count,
             "pages_count": round(query_count / page_size),
+            "page": page,
         }
     }
     return JsonResponse(request, res_body)
