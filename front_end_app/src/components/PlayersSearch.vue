@@ -24,29 +24,57 @@
       </div>
     </form>
 
-    <div class="card-columns">
-      <div class="card" v-for="player in players" v-bind:key="player.id">
-        <img
-          class="card-img-top"
-          v-bind:src="player.photo"
-          v-bind:alt="player.name"
-        />
-        <div class="card-body">
-          <h5 class="card-title">{{ player.name }}</h5>
-          <p class="card-text"><b>Age: </b>{{ player.age }}</p>
-          <p class="card-text">
-            <b>Nationality: </b>{{ player.nationality.name }}
-          </p>
-          <p class="card-text"><b>Club: </b>{{ player.club.name }}</p>
-          <p class="card-text"><b>Overall (score): </b>{{ player.overall }}</p>
-          <p class="card-text">
-            <b>Value: </b>€ {{ player.value.toLocaleString() }}
-          </p>
+    <div v-if="players.length" class="d-flex justify-content-center mt-3">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <li class="page-item">
+            <a class="page-link" v-on:click="getPreviousPage()">Previous</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link">{{ response_data.page }}</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" v-on:click="getNextPage()">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <div v-if="loading" class="mt-5 d-flex justify-content-center">
+      <h4>Loading .....</h4>
+    </div>
+
+    <div v-if="!players.length" class="mt-5 d-flex justify-content-center">
+      <h4>No players Found !</h4>
+    </div>
+
+    <div v-if="!loading" class="mt-4">
+      <div class="card-columns">
+        <div class="card" v-for="player in players" v-bind:key="player.id">
+          <img
+            class="card-img-top"
+            v-bind:src="player.photo"
+            v-bind:alt="player.name"
+          />
+          <div class="card-body">
+            <h5 class="card-title">{{ player.name }}</h5>
+            <p class="card-text"><b>Age: </b>{{ player.age }}</p>
+            <p class="card-text">
+              <b>Nationality: </b>{{ player.nationality.name }}
+            </p>
+            <p class="card-text"><b>Club: </b>{{ player.club.name }}</p>
+            <p class="card-text">
+              <b>Overall (score): </b>{{ player.overall }}
+            </p>
+            <p class="card-text">
+              <b>Value: </b>€ {{ player.value.toLocaleString() }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="d-flex justify-content-center mt-3">
+    <div v-if="players.length" class="d-flex justify-content-center mt-3">
       <nav aria-label="Page navigation example">
         <ul class="pagination">
           <li class="page-item">
@@ -77,6 +105,7 @@ export default {
       players: [],
       response_data: {},
       searchText: "",
+      loading: false,
     };
   },
   mounted() {
@@ -90,14 +119,18 @@ export default {
       let params = {};
       if (this.searchText) params["search"] = this.searchText;
       if (page) params["page"] = page;
+      this.loading = true;
+
       axios
         .get("http://localhost/be/players/", { params })
         .then((response) => {
           this.players = response.data.data.players;
           this.response_data = response.data.data;
+          this.loading = false;
         })
         .catch((e) => {
           console.log(e);
+          this.loading = false;
         });
     },
     getNextPage() {
