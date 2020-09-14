@@ -6,8 +6,8 @@ from app.models import (
     Nationality,
 )
 
+
 class TeamBuilder(object):
-    all_filled = False
     positions = {
         "goalkeeper": ["GK"],
         "fullback": ["LB", "RB", "LWB", "RWB"],
@@ -26,6 +26,7 @@ class TeamBuilder(object):
         ],
         "forward_playing": ["CAM", "LAM", "RAM", "LWF", "RWF", "CF", "LCF", "RCF"],
     }
+    all_positions = [i for k, v in positions.items() for i in v]
     players_types_dict = {i: k for k, v in positions.items() for i in v}
 
     goalkeeper_ps = []
@@ -37,8 +38,12 @@ class TeamBuilder(object):
         self.total = total
         self.query = (
             Player.select()
-            .where(Player.value <= total / 2)
+            .where(
+                Player.value <= total / 2,
+                Player.position.in_(self.all_positions)
+            )
             .order_by(Player.overall.desc())
+            .limit(200)
         )
         self.query_arr = [model_to_dict(i) for i in self.query]
         self.players_count = self.query.count()
