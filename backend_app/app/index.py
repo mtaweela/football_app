@@ -39,18 +39,29 @@ def search_players(query, search_string):
 
 @app.route("/players/")
 def get_players(request):
-    query = (
-        Player.select(Player, Nationality, Club)
-        .join(Club, on=(Player.club == Club.id))
-        .switch(Player)
-        .join(Nationality, on=(Player.nationality == Nationality.id))
-    )
+    page_size = 10
+    page = 1
+    query = Player.select(Player)
 
     search_string = request.query_params.get("search")
     if search_string:
+        print("-" * 100)
         query = search_players(query, search_string)
 
-    res_body = [model_to_dict(item, recurse=True) for item in query]
+    query_count = query.count()
+    page_query = request.query_params.get("page")
+
+    if page_query:
+        page = int(page_query)
+
+    query = query.paginate(page, page_size)
+    res_body = {
+        "data": {
+            "players": [model_to_dict(item, recurse=True) for item in query],
+            "count": query_count,
+            "pages_count": round(query_count / page_size)
+        }
+    }
     return JsonResponse(request, res_body)
 
 
@@ -64,16 +75,12 @@ def get_best_team(request):
         return HttpResponseBadRequest(request, {"detail": e.message})
 
     team_ids = [player.get("id") for player in team_arr]
-    query = (
-        Player.select(Player)
-        .where(Player.id.in_(team_ids))
-        # .join(Club, on=(Player.club == Club.id))
-        # .switch(Player)
-        # .join(Nationality, on=(Player.nationality == Nationality.id))
-    )
+    query = Player.select(Player).where(Player.id.in_(team_ids))
+
     players = [model_to_dict(item) for item in query]
     res_body = {
         "players": players,
-        "total": sum([player.get("value") or 0 for player in players])
+        "total": sum([player.get("value") or 0 for player in players]),
     }
+
     return JsonResponse(request, res_body)
