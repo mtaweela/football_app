@@ -41,11 +41,15 @@ def search_players(query, search_string):
 def get_players(request):
     page_size = 10
     page = 1
-    query = Player.select(Player)
+    query = (
+        Player.select(Player)
+        .join(Club, on=(Player.club == Club.id))
+        .switch(Player)
+        .join(Nationality, on=(Player.nationality == Nationality.id))
+    )
 
     search_string = request.query_params.get("search")
     if search_string:
-        print("-" * 100)
         query = search_players(query, search_string)
 
     query_count = query.count()
@@ -54,10 +58,10 @@ def get_players(request):
     if page_query:
         page = int(page_query)
 
-    query = query.paginate(page, page_size)
+    query_page = query.paginate(page, page_size)
     res_body = {
         "data": {
-            "players": [model_to_dict(item, recurse=True) for item in query],
+            "players": [model_to_dict(item, recurse=True) for item in query_page],
             "count": query_count,
             "pages_count": round(query_count / page_size),
         }
