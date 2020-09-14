@@ -17,21 +17,16 @@ from app.utils import TeamBuilder, CanNotBuildException
 app = WSGIHandler()
 
 
-@app.before_request()
-def open_db_connection(request):
-    g.db = db
-    g.db.connect()
+# @app.before_request()
+# def open_db_connection(request):
+#     g.db = db
+#     g.db.connect()
 
 
-@app.after_request()
-def close_db_connection(response):
-    g.db.close()
-    return response
-
-
-@app.route("/")
-def index(request):
-    return JsonResponse(request, {"index": "index"})
+# @app.after_request()
+# def close_db_connection(response):
+#     g.db.close()
+#     return response
 
 
 def search_players(query, search_string):
