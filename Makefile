@@ -2,7 +2,7 @@
 dev:
 	docker-compose up
 
-# --- production 
+# --- production
 prod:
 	docker-compose -f docker-compose.production.yml up -d
 prod_down:
