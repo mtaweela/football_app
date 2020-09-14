@@ -1,14 +1,13 @@
 dev:
 	docker-compose up
-
 prod:
-	docker-compose -f docker-compose.production.yml
+	docker-compose -f docker-compose.production.yml up -d
 
-install:
+install_front:
 	docker-compose -f docker-compose.builder.yml run --rm install
-
 build_front:
 	docker-compose -f docker-compose.builder.yml run --rm build
+
 # containers commands
 cbe: # connect to backend container
 	docker-compose exec backend /bin/bash
