@@ -280,6 +280,9 @@ dmypy.json
 dumy/
 del.*
 .docker.env
+/db
+data.csv
+*.sql
 
 # Editor directories and files
 .idea
