@@ -122,7 +122,7 @@ export default {
       this.loading = true;
 
       axios
-        .get("http://localhost/be/players/", { params })
+        .get("http://footballapp.dev01.dev/be/players/", { params })
         .then((response) => {
           this.players = response.data.data.players;
           this.response_data = response.data.data;
