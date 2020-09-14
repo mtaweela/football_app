@@ -49,9 +49,12 @@ def get_players(request):
         .switch(Player)
         .join(Nationality, on=(Player.nationality == Nationality.id))
     )
+
+    search_string = request.query_params.get("search")
     if search_string:
         query = search_players(query, search_string)
-        res_body = [model_to_dict(item, recurse=True) for item in query]
-        return JsonResponse(request, res_body)
+
     res_body = [model_to_dict(item, recurse=True) for item in query]
+    return JsonResponse(request, res_body)
+
     return JsonResponse(request, res_body)
