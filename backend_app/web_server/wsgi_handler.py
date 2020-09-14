@@ -144,7 +144,7 @@ class HttpResponseBase(object):
         self.request.start_response(
             str(self.status_code), [("Content-Type", self.content_type)]
         )
-        return [bytes(self._content)]
+        return [bytes(self._content, "utf-8")]
 
 
 class HttpResponse(HttpResponseBase):
